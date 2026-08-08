@@ -132,8 +132,8 @@ const inlineStyles = `
     overflow: visible;
   }
   .sg-gold-filter {
-    /* Dorado champan: menos saturado/anaranjado, mas claro y brillante */
-    filter: sepia(0.55) saturate(1.6) hue-rotate(8deg) brightness(1.35) contrast(0.92);
+    /* Dorado champan suave: sepia completo quita el azul/violeta base, resto aclara y da un toque calido */
+    filter: sepia(1) saturate(1.7) hue-rotate(2deg) brightness(1.3) contrast(0.9);
   }
   .sg-orb-img {
     width: 100%; height: 100%;
@@ -362,25 +362,27 @@ const inlineStyles = `
  
   .sg-whatsapp-btn {
     position: fixed;
-    bottom: 22px;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 18px;
+    left: 20px;
+    right: 20px;
     background: rgba(2,6,23,0.9);
     border: 1px solid rgba(212,175,55,0.4);
     color: rgba(212,175,55,0.9);
-    font-size: 11.5px;
+    font-size: 11px;
     font-weight: 300;
-    letter-spacing: 0.3px;
-    padding: 11px 20px;
-    border-radius: 30px;
+    letter-spacing: 0.2px;
+    padding: 12px 18px;
+    border-radius: 24px;
     cursor: pointer;
     text-decoration: none;
-    display: flex; align-items: center; gap: 8px;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
     backdrop-filter: blur(8px);
     z-index: 10;
     transition: all 0.3s ease;
-    white-space: nowrap;
-    max-width: calc(100% - 40px);
+    white-space: normal;
+    line-height: 1.4;
+    box-sizing: border-box;
   }
   .sg-whatsapp-btn:hover { border-color: ${GOLD}; color: ${GOLD}; box-shadow: 0 0 20px rgba(212,175,55,0.2); }
 `;
