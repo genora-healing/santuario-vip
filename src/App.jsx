@@ -8,16 +8,37 @@ import React, { useState, useEffect, useRef } from 'react';
 const GOLD = '#d4af37';
 const BG = '#020617';
  
-// ---- CONFIGURACIÓN: códigos válidos ----
-const VALID_CODES = ['GENORA2026'];
- 
 // ---- CONFIGURACIÓN: WhatsApp de contacto ----
 // ⚠️ Reemplaza por tu número real con código de país, sin +, sin espacios (ej: 573001234567)
 const WHATSAPP_NUMBER = '573000000000';
-const WHATSAPP_MSG = encodeURIComponent('Hola Pamela, necesito acompañamiento o un nuevo código de acceso al Santuario GENORA 🙏✨');
+const WHATSAPP_MSG_ES = encodeURIComponent('Hola Pamela, necesito acompañamiento o un nuevo código de acceso al Santuario GENORA 🙏✨');
+const WHATSAPP_MSG_EN = encodeURIComponent('Hi Pamela, I need support or a new access code for Santuario GENORA 🙏✨');
  
-// ---- CATÁLOGO DE EJEMPLO ----
-// Reemplaza src por la URL real de tu bucket S3 (genora-global-frecuencias, us-east-2)
+// ---- Traducciones ----
+const T = {
+  es: {
+    sanctuaryTitle: 'SANTUARIO GENORA',
+    noTokenMsg: 'Este espacio requiere un enlace de acceso VIP personalizado.',
+    conflictMsg1: '✦ Este enlace de acompañamiento exclusivo ya se encuentra activo en otro dispositivo.',
+    conflictMsg2: 'Si cambiaste de teléfono o necesitas asistencia, contacta directamente a Pamela.',
+    contactBtn: '✦ Contactar a Pamela',
+    checking: 'Sintonizando tu acceso...',
+    welcomeHi: 'BIENVENIDA A TU ESPACIO',
+    whatsappFooter: '✦ ¿Necesitas acompañamiento o un nuevo código? Contacta a Pamela',
+  },
+  en: {
+    sanctuaryTitle: 'SANTUARIO GENORA',
+    noTokenMsg: 'This space requires a personalized VIP access link.',
+    conflictMsg1: '✦ This exclusive companion link is already active on another device.',
+    conflictMsg2: 'If you changed phones or need assistance, contact Pamela directly.',
+    contactBtn: '✦ Contact Pamela',
+    checking: 'Tuning in your access...',
+    welcomeHi: 'WELCOME TO YOUR SPACE',
+    whatsappFooter: '✦ Need support or a new code? Contact Pamela',
+  },
+};
+ 
+// ---- CATÁLOGO REAL (sincronizado con SANCTUARY_TOOLS de la app principal) ----
 const TRACKS = [
   { id: 'vital-restore', type: 'audio', title: 'Vital Restore', description: 'Restauracion vital y recuperacion de energia.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/vital-restore.wav' },
   { id: 'energy-full-reset', type: 'audio', title: 'Energy Full Reset', description: 'Limpieza de oscuridad y recalibracion de energia.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/energy-full-reset.wav' },
@@ -30,7 +51,6 @@ const TRACKS = [
   { id: 'safe-within', type: 'audio', title: 'Safe Within', description: 'Desactivacion de miedos y ansiedades profundas, recuperacion del equilibrio interior.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/safe-within.wav' },
 ];
  
-// ---- Los 5 anillos del mandala (idénticos a los del reproductor principal) ----
 const WAVE_RINGS = [
   { delay: '0s', d: 'M 186.00,100.00 C 188.29,103.74 191.51,108.12 192.13,112.13 C 192.76,116.14 191.88,120.59 189.76,124.05 C 187.65,127.52 183.00,130.33 179.45,132.91 C 175.91,135.49 171.27,137.00 168.48,139.54 C 165.69,142.07 164.01,144.59 162.73,148.14 C 161.45,151.68 161.84,156.55 160.81,160.81 C 159.78,165.08 158.96,170.45 156.57,173.72 C 154.18,177.00 150.41,179.52 146.46,180.48 C 142.52,181.43 137.24,180.14 132.91,179.45 C 128.58,178.77 124.23,176.55 120.47,176.38 C 116.70,176.20 113.73,176.79 110.32,178.40 C 106.91,180.00 103.74,183.71 100.00,186.00 C 96.26,188.29 91.88,191.51 87.87,192.13 C 83.86,192.76 79.41,191.88 75.95,189.76 C 72.48,187.65 69.67,183.00 67.09,179.45 C 64.51,175.91 63.00,171.27 60.46,168.48 C 57.93,165.69 55.41,164.01 51.86,162.73 C 48.32,161.45 43.45,161.84 39.19,160.81 C 34.92,159.78 29.55,158.96 26.28,156.57 C 23.00,154.18 20.48,150.41 19.52,146.46 C 18.57,142.52 19.86,137.24 20.55,132.91 C 21.23,128.58 23.45,124.23 23.62,120.47 C 23.80,116.70 23.21,113.73 21.60,110.32 C 20.00,106.91 16.29,103.74 14.00,100.00 C 11.71,96.26 8.49,91.88 7.87,87.87 C 7.24,83.86 8.12,79.41 10.24,75.95 C 12.35,72.48 17.00,69.67 20.55,67.09 C 24.09,64.51 28.73,63.00 31.52,60.46 C 34.31,57.93 35.99,55.41 37.27,51.86 C 38.55,48.32 38.16,43.45 39.19,39.19 C 40.22,34.92 41.04,29.55 43.43,26.28 C 45.82,23.00 49.59,20.48 53.54,19.52 C 57.48,18.57 62.76,19.86 67.09,20.55 C 71.42,21.23 75.77,23.45 79.53,23.62 C 83.30,23.80 86.27,23.21 89.68,21.60 C 93.09,20.00 96.26,16.29 100.00,14.00 C 103.74,11.71 108.12,8.49 112.13,7.87 C 116.14,7.24 120.59,8.12 124.05,10.24 C 127.52,12.35 130.33,17.00 132.91,20.55 C 135.49,24.09 137.00,28.73 139.54,31.52 C 142.07,34.31 144.59,35.99 148.14,37.27 C 151.68,38.55 156.55,38.16 160.81,39.19 C 165.08,40.22 170.45,41.04 173.72,43.43 C 177.00,45.82 179.52,49.59 180.48,53.54 C 181.43,57.48 180.14,62.76 179.45,67.09 C 178.77,71.42 176.55,75.77 176.38,79.53 C 176.20,83.30 176.79,86.27 178.40,89.68 C 180.00,93.09 183.71,96.26 186.00,100.00 Z' },
   { delay: '0.8s', d: 'M 191.15,100.00 C 192.90,103.85 193.98,108.43 193.07,112.25 C 192.16,116.08 188.76,119.85 185.70,122.96 C 182.64,126.08 177.70,128.26 174.69,130.94 C 171.69,133.62 169.09,135.77 167.66,139.06 C 166.22,142.36 166.60,146.46 166.07,150.70 C 165.54,154.93 165.94,160.49 164.46,164.46 C 162.97,168.42 160.50,172.41 157.15,174.48 C 153.80,176.54 148.73,176.80 144.36,176.84 C 139.99,176.87 134.96,174.92 130.94,174.69 C 126.92,174.46 123.56,174.15 120.22,175.46 C 116.88,176.77 114.24,179.95 110.87,182.57 C 107.50,185.18 103.85,189.40 100.00,191.15 C 96.15,192.90 91.57,193.98 87.75,193.07 C 83.92,192.16 80.15,188.76 77.04,185.70 C 73.92,182.64 71.74,177.70 69.06,174.69 C 66.38,171.69 64.23,169.09 60.94,167.66 C 57.64,166.22 53.54,166.60 49.30,166.07 C 45.07,165.54 39.51,165.94 35.54,164.46 C 31.58,162.97 27.59,160.50 25.52,157.15 C 23.46,153.80 23.20,148.73 23.16,144.36 C 23.13,139.99 25.08,134.96 25.31,130.94 C 25.54,126.92 25.85,123.56 24.54,120.22 C 23.23,116.88 20.05,114.24 17.43,110.87 C 14.82,107.50 10.60,103.85 8.85,100.00 C 7.10,96.15 6.02,91.57 6.93,87.75 C 7.84,83.92 11.24,80.15 14.30,77.04 C 17.36,73.92 22.30,71.74 25.31,69.06 C 28.31,66.38 30.91,64.23 32.34,60.94 C 33.78,57.64 33.40,53.54 33.93,49.30 C 34.46,45.07 34.06,39.51 35.54,35.54 C 37.03,31.58 39.50,27.59 42.85,25.52 C 46.20,23.46 51.27,23.20 55.64,23.16 C 60.01,23.13 65.04,25.08 69.06,25.31 C 73.08,25.54 76.44,25.85 79.78,24.54 C 83.12,23.23 85.76,20.05 89.13,17.43 C 92.50,14.82 96.15,10.60 100.00,8.85 C 103.85,7.10 108.43,6.02 112.25,6.93 C 116.08,7.84 119.85,11.24 122.96,14.30 C 126.08,17.36 128.26,22.30 130.94,25.31 C 133.62,28.31 135.77,30.91 139.06,32.34 C 142.36,33.78 146.46,33.40 150.70,33.93 C 154.93,34.46 160.49,34.06 164.46,35.54 C 168.42,37.03 172.41,39.50 174.48,42.85 C 176.54,46.20 176.80,51.27 176.84,55.64 C 176.87,60.01 174.92,65.04 174.69,69.06 C 174.46,73.08 174.15,76.44 175.46,79.78 C 176.77,83.12 179.95,85.76 182.57,89.13 C 185.18,92.50 189.40,96.15 191.15,100.00 Z' },
@@ -40,17 +60,18 @@ const WAVE_RINGS = [
 ];
  
 const inlineStyles = `
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600&display=swap');
   * { box-sizing: border-box; }
   .sg-root {
     min-height: 100vh;
     width: 100%;
     background: ${BG};
     color: #f5eddc;
-    font-family: 'Georgia', 'Cormorant Garamond', serif;
+    font-family: 'Inter', -apple-system, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px 20px 100px;
+    padding: 70px 20px 100px;
     position: relative;
     overflow-x: hidden;
   }
@@ -62,32 +83,61 @@ const inlineStyles = `
     pointer-events: none;
     z-index: 0;
   }
-  .sg-content { position: relative; z-index: 1; width: 100%; max-width: 480px; display: flex; flex-direction: column; align-items: center; }
+  .sg-content { position: relative; z-index: 1; width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; }
+ 
+  /* ---- Header fijo: logo + selector de idioma ---- */
+  .sg-header {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 22px;
+    z-index: 20;
+    pointer-events: none;
+  }
+  .sg-header-logo { height: 22px; opacity: 0.85; pointer-events: auto; }
+  .sg-lang-toggle {
+    pointer-events: auto;
+    display: flex; align-items: center; gap: 0;
+    border: 1px solid rgba(212,175,55,0.35);
+    border-radius: 20px;
+    overflow: hidden;
+    background: rgba(2,6,23,0.6);
+    backdrop-filter: blur(6px);
+  }
+  .sg-lang-btn {
+    background: none; border: none; cursor: pointer;
+    color: rgba(245,237,220,0.5);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: 1px;
+    padding: 6px 12px;
+    transition: all 0.25s ease;
+  }
+  .sg-lang-btn.active { background: ${GOLD}; color: #020617; }
  
   @keyframes aura-gold-santuario {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 60px rgba(212,175,55,0.25), 0 0 120px rgba(212,175,55,0.12); }
-    50% { transform: scale(1.02); box-shadow: 0 0 40px rgba(212,175,55,0.6), 0 0 100px rgba(212,175,55,0.35); }
+    0%, 100% { transform: scale(1); box-shadow: 0 0 50px 0 rgba(212,175,55,0.35), 0 0 100px 0 rgba(212,175,55,0.18); }
+    50% { transform: scale(1.03); box-shadow: 0 0 90px 10px rgba(212,175,55,0.7), 0 0 180px 20px rgba(212,175,55,0.4), 0 0 300px 40px rgba(212,175,55,0.18); }
   }
   .sg-orb-wrap {
-    width: 150px; height: 150px;
+    width: 140px; height: 140px;
     display: flex; align-items: center; justify-content: center;
-    margin-bottom: 28px;
+    margin-bottom: 26px;
     overflow: visible;
   }
+  .sg-gold-filter {
+    filter: sepia(1) saturate(4.5) hue-rotate(-15deg) brightness(1.05) contrast(1.05);
+  }
   .sg-orb-img {
-    width: 82%; height: 82%;
+    width: 100%; height: 100%;
+    object-fit: contain;
     border-radius: 50%;
     background: rgba(2,6,23,0.92);
-    padding: 4%;
     animation: aura-gold-santuario 5s ease-in-out infinite;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 42px;
   }
  
   .sg-title {
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: 28px;
-    letter-spacing: 4px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 22px;
+    letter-spacing: 6px;
     color: ${GOLD};
     text-align: center;
     margin: 0 0 12px;
@@ -95,42 +145,27 @@ const inlineStyles = `
   }
   .sg-subtext {
     text-align: center;
-    color: rgba(245,237,220,0.65);
-    font-size: 15px;
-    line-height: 1.6;
-    max-width: 340px;
+    color: rgba(245,237,220,0.6);
+    font-size: 13.5px;
+    font-weight: 300;
+    line-height: 1.7;
+    letter-spacing: 0.3px;
+    max-width: 320px;
     margin: 0 0 32px;
   }
  
-  .sg-input {
-    width: 100%;
-    max-width: 320px;
-    background: rgba(212,175,55,0.06);
-    border: 1px solid rgba(212,175,55,0.35);
-    border-radius: 30px;
-    padding: 16px 22px;
-    color: #f5eddc;
-    font-size: 15px;
-    letter-spacing: 2px;
-    text-align: center;
-    outline: none;
-    transition: all 0.3s ease;
-    margin-bottom: 18px;
-  }
-  .sg-input:focus { border-color: ${GOLD}; box-shadow: 0 0 20px rgba(212,175,55,0.25); }
-  .sg-input::placeholder { color: rgba(245,237,220,0.35); letter-spacing: 1px; }
- 
   .sg-btn-primary {
     width: 100%;
-    max-width: 320px;
+    max-width: 300px;
     background: linear-gradient(135deg, ${GOLD}, #b8933f);
     border: none;
     border-radius: 30px;
-    padding: 16px 22px;
+    padding: 14px 22px;
     color: #020617;
-    font-weight: 700;
-    letter-spacing: 3px;
-    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    font-size: 12.5px;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 6px 24px rgba(212,175,55,0.25);
@@ -138,83 +173,74 @@ const inlineStyles = `
   .sg-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212,175,55,0.4); }
   .sg-btn-primary:active { transform: translateY(0); }
  
-  .sg-error {
-    color: #ff8a8a;
-    font-size: 13px;
-    letter-spacing: 0.5px;
-    margin-bottom: 16px;
-    min-height: 18px;
-    text-align: center;
-    animation: fadeInDown 0.3s ease;
-  }
-  @keyframes fadeInDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes fadeInUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
  
-  .sg-greeting { text-align: center; margin-bottom: 26px; }
-  .sg-greeting-hi { font-size: 13px; letter-spacing: 3px; color: rgba(212,175,55,0.7); text-transform: uppercase; margin-bottom: 6px; }
-  .sg-greeting-title { font-size: 24px; color: #f5eddc; font-weight: 500; }
+  .sg-greeting { text-align: center; margin-bottom: 24px; }
+  .sg-greeting-hi { font-family: 'Montserrat', sans-serif; font-size: 11px; letter-spacing: 3.5px; color: rgba(212,175,55,0.7); text-transform: uppercase; margin-bottom: 6px; font-weight: 500; }
+  .sg-greeting-title { font-family: 'Montserrat', sans-serif; font-size: 19px; color: #f5eddc; font-weight: 500; letter-spacing: 1px; }
  
-  .sg-card-list { width: 100%; display: flex; flex-direction: column; gap: 14px; }
+  /* ---- Tarjetas compactas y delgadas ---- */
+  .sg-card-list { width: 100%; display: flex; flex-direction: column; gap: 10px; }
   .sg-card {
-    background: linear-gradient(135deg, rgba(212,175,55,0.08), rgba(212,175,55,0.02));
-    border: 1px solid rgba(212,175,55,0.25);
-    border-radius: 20px;
-    padding: 18px 20px;
+    background: rgba(212,175,55,0.03);
+    border: 1px solid rgba(212,175,55,0.18);
+    border-radius: 14px;
+    padding: 12px 14px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
     animation: fadeInUp 0.5s ease backwards;
   }
-  .sg-card:hover { border-color: rgba(212,175,55,0.6); background: linear-gradient(135deg, rgba(212,175,55,0.14), rgba(212,175,55,0.04)); transform: translateY(-2px); }
+  .sg-card:hover { border-color: rgba(212,175,55,0.45); background: rgba(212,175,55,0.06); }
   .sg-card-icon {
     flex-shrink: 0;
-    width: 46px; height: 46px;
+    width: 34px; height: 34px;
     border-radius: 50%;
-    background: rgba(212,175,55,0.12);
-    border: 1px solid rgba(212,175,55,0.4);
+    overflow: hidden;
+    background: rgba(2,6,23,0.9);
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    color: ${GOLD};
   }
+  .sg-card-icon video { width: 100%; height: 100%; object-fit: cover; }
   .sg-card-body { flex: 1; min-width: 0; }
-  .sg-card-title { font-size: 16px; color: #f5eddc; font-weight: 600; margin-bottom: 3px; }
-  .sg-card-desc { font-size: 12.5px; color: rgba(245,237,220,0.55); line-height: 1.4; margin-bottom: 4px; }
-  .sg-card-duration { font-size: 11px; color: rgba(212,175,55,0.7); letter-spacing: 1px; }
+  .sg-card-title { font-size: 13.5px; color: #f5eddc; font-weight: 500; margin-bottom: 2px; letter-spacing: 0.2px; }
+  .sg-card-desc { font-size: 11px; color: rgba(245,237,220,0.45); font-weight: 300; line-height: 1.3; margin-bottom: 3px; }
+  .sg-card-duration { font-size: 10px; color: rgba(212,175,55,0.6); letter-spacing: 0.5px; font-weight: 300; }
   .sg-card-play {
     flex-shrink: 0;
-    width: 38px; height: 38px;
-    border-radius: 50%;
-    background: ${GOLD};
-    color: #020617;
+    width: 24px; height: 24px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
+    color: ${GOLD};
+    font-size: 13px;
+    opacity: 0.8;
   }
  
   .sg-back {
     align-self: flex-start;
     background: none;
     border: none;
-    color: rgba(212,175,55,0.75);
-    font-size: 13px;
-    letter-spacing: 1px;
+    color: rgba(212,175,55,0.7);
+    font-size: 18px;
     cursor: pointer;
-    margin-bottom: 20px;
-    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px;
+    transition: color 0.2s ease;
   }
   .sg-back:hover { color: ${GOLD}; }
  
   /* ---- Reproductor Templo Dorado ---- */
-  .sg-player { display: flex; flex-direction: column; align-items: center; width: 100%; padding-top: 10px; }
-  .sg-player-track-title { font-size: 20px; color: #f5eddc; text-align: center; margin: 24px 0 6px; font-weight: 600; }
-  .sg-player-track-desc { font-size: 13px; color: rgba(245,237,220,0.55); text-align: center; max-width: 300px; margin-bottom: 34px; }
+  .sg-player { display: flex; flex-direction: column; align-items: center; width: 100%; padding-top: 4px; }
+  .sg-player-track-title { font-family: 'Montserrat', sans-serif; font-size: 17px; color: #f5eddc; text-align: center; margin: 22px 0 6px; font-weight: 500; letter-spacing: 1px; }
+  .sg-player-track-desc { font-size: 12.5px; font-weight: 300; color: rgba(245,237,220,0.5); text-align: center; max-width: 290px; margin-bottom: 6px; line-height: 1.5; }
+  .sg-player-duration { font-size: 11px; color: rgba(212,175,55,0.7); letter-spacing: 1px; margin-bottom: 30px; font-weight: 300; }
  
   .sg-templo-orb-container {
     position: relative;
     display: flex; align-items: center; justify-content: center;
-    width: 190px; height: 190px;
-    margin-bottom: 30px;
+    width: 170px; height: 170px;
+    margin-bottom: 12px;
     overflow: visible !important;
     will-change: transform, opacity;
     transform: translateZ(0);
@@ -226,10 +252,11 @@ const inlineStyles = `
     width: 62%; height: 62%;
     border-radius: 50%;
     background: rgba(2,6,23,0.92);
+    overflow: hidden;
     display: flex; align-items: center; justify-content: center;
-    font-size: 40px;
     animation: aura-gold-santuario 5s ease-in-out infinite;
   }
+  .sg-templo-core video { width: 100%; height: 100%; object-fit: cover; }
   .sg-templo-wave-svg {
     position: absolute; top: 0; left: 0;
     width: 100%; height: 100%;
@@ -255,7 +282,17 @@ const inlineStyles = `
     will-change: transform, opacity;
     backface-visibility: hidden;
   }
-  .sg-templo-wave-group.paused { animation-play-state: paused; }
+  .sg-templo-wave-group.paused {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+  .sg-templo-wave-group.paused .sg-templo-wave-halo {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+  .sg-templo-wave-group.paused .sg-templo-wave-line {
+    opacity: 0 !important;
+  }
   .sg-templo-wave-halo {
     fill: none;
     stroke: rgba(212, 175, 55, 1);
@@ -271,51 +308,52 @@ const inlineStyles = `
     stroke: #ffe9b3;
     stroke-width: 1.5px;
     vector-effect: non-scaling-stroke;
-    filter: drop-shadow(0 0 6px #d4af37) drop-shadow(0 0 14px rgba(34,211,238,0.55));
+    filter: drop-shadow(0 0 6px #d4af37) drop-shadow(0 0 14px rgba(212,175,55,0.5));
     transform: scale(0.93) translateZ(0);
     backface-visibility: hidden;
     transform-box: fill-box; transform-origin: 50% 50%;
   }
  
-  .sg-progress-wrap { width: 100%; max-width: 320px; margin-bottom: 8px; }
+  .sg-progress-wrap { width: 100%; max-width: 300px; margin-bottom: 8px; }
   .sg-progress-bar {
-    width: 100%; height: 4px;
+    width: 100%; height: 3px;
     background: rgba(212,175,55,0.15);
     border-radius: 4px;
     overflow: hidden;
     cursor: pointer;
   }
   .sg-progress-fill { height: 100%; background: linear-gradient(90deg, ${GOLD}, #ffe9b3); border-radius: 4px; transition: width 0.15s linear; }
-  .sg-time-row { display: flex; justify-content: space-between; font-size: 11px; color: rgba(245,237,220,0.5); letter-spacing: 0.5px; margin-top: 6px; }
+  .sg-time-row { display: flex; justify-content: space-between; font-size: 10.5px; color: rgba(245,237,220,0.45); letter-spacing: 0.5px; margin-top: 6px; font-weight: 300; }
  
-  .sg-duration-selector { display: flex; gap: 8px; margin: 22px 0; }
+  .sg-duration-selector { display: flex; gap: 8px; margin: 20px 0; }
   .sg-duration-chip {
-    padding: 8px 16px;
+    padding: 6px 14px;
     border-radius: 20px;
-    border: 1px solid rgba(212,175,55,0.3);
+    border: 1px solid rgba(212,175,55,0.25);
     background: transparent;
-    color: rgba(245,237,220,0.6);
-    font-size: 12px;
-    letter-spacing: 1px;
+    color: rgba(245,237,220,0.55);
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    font-weight: 300;
     cursor: pointer;
     transition: all 0.25s ease;
   }
-  .sg-duration-chip.active { background: ${GOLD}; color: #020617; border-color: ${GOLD}; font-weight: 700; }
+  .sg-duration-chip.active { background: ${GOLD}; color: #020617; border-color: ${GOLD}; font-weight: 600; }
  
   .sg-play-btn {
-    width: 68px; height: 68px;
+    width: 56px; height: 56px;
     border-radius: 50%;
-    background: linear-gradient(135deg, ${GOLD}, #b8933f);
-    border: none;
-    color: #020617;
-    font-size: 24px;
+    background: transparent;
+    border: 1px solid rgba(212,175,55,0.5);
+    color: ${GOLD};
+    font-size: 18px;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
-    box-shadow: 0 8px 28px rgba(212,175,55,0.35);
-    margin-top: 8px;
-    transition: transform 0.2s ease;
+    box-shadow: 0 0 20px rgba(212,175,55,0.15);
+    margin-top: 6px;
+    transition: all 0.25s ease;
   }
-  .sg-play-btn:hover { transform: scale(1.05); }
+  .sg-play-btn:hover { border-color: ${GOLD}; box-shadow: 0 0 28px rgba(212,175,55,0.3); }
   .sg-play-btn:active { transform: scale(0.96); }
  
   .sg-whatsapp-btn {
@@ -326,9 +364,10 @@ const inlineStyles = `
     background: rgba(2,6,23,0.9);
     border: 1px solid rgba(212,175,55,0.4);
     color: rgba(212,175,55,0.9);
-    font-size: 12.5px;
-    letter-spacing: 0.5px;
-    padding: 12px 22px;
+    font-size: 11.5px;
+    font-weight: 300;
+    letter-spacing: 0.3px;
+    padding: 11px 20px;
     border-radius: 30px;
     cursor: pointer;
     text-decoration: none;
@@ -347,7 +386,7 @@ function TemploWave({ paused }) {
     <svg className="sg-templo-wave-svg" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
       {WAVE_RINGS.map((ring, i) => (
         <g key={i} className={`sg-templo-wave-group${paused ? ' paused' : ''}`} style={{ animationDelay: ring.delay }}>
-          <path className="sg-templo-wave-halo" style={{ animationDelay: ring.delay, animationPlayState: paused ? 'paused' : 'running' }} d={ring.d} />
+          <path className="sg-templo-wave-halo" style={{ animationDelay: ring.delay }} d={ring.d} />
           <path className="sg-templo-wave-line" d={ring.d} />
         </g>
       ))}
@@ -363,9 +402,9 @@ function formatTime(sec) {
 }
  
 export default function SantuarioGenoraApp() {
-  const [view, setView] = useState('lock'); // 'lock' | 'catalog' | 'player'
-  const [codeInput, setCodeInput] = useState('');
-  const [error, setError] = useState('');
+  const [view, setView] = useState('catalog'); // 'catalog' | 'player'
+  const [accessState, setAccessState] = useState('checking'); // 'checking' | 'no-token' | 'device-conflict' | 'granted'
+  const [lang, setLang] = useState('es');
   const [selectedTrack, setSelectedTrack] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -374,21 +413,36 @@ export default function SantuarioGenoraApp() {
  
   const mediaRef = useRef(null);
   const limitTimeoutRef = useRef(null);
+  const t = T[lang];
  
-  const handleAccessSubmit = (e) => {
-    e.preventDefault();
-    const clean = codeInput.trim().toUpperCase();
-    if (VALID_CODES.includes(clean)) {
-      setError('');
-      setView('catalog');
-    } else {
-      setError('Código no verificado. Solicita tu código de acceso a Pamela.');
+  // ---- Nivel 1: Token único en la URL + anclaje al dispositivo (localStorage) ----
+  // NOTA HONESTA: esto detecta y bloquea que ESTE MISMO navegador pruebe varios
+  // enlaces distintos. NO puede detectar que el MISMO enlace se abrió en OTRO
+  // dispositivo, porque localStorage no viaja entre dispositivos.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+ 
+    if (!token) {
+      setAccessState('no-token');
+      return;
     }
-  };
+ 
+    const boundToken = localStorage.getItem('genora_bound_token');
+    if (!boundToken) {
+      localStorage.setItem('genora_bound_token', token);
+      setAccessState('granted');
+    } else if (boundToken === token) {
+      setAccessState('granted');
+    } else {
+      setAccessState('device-conflict');
+    }
+  }, []);
  
   const openTrack = (track) => {
     setSelectedTrack(track);
     setCurrentTime(0);
+    setTrackDuration(0);
     setIsPlaying(false);
     setDurationLimit(null);
     setView('player');
@@ -439,47 +493,87 @@ export default function SantuarioGenoraApp() {
  
   const progressPct = trackDuration ? (currentTime / trackDuration) * 100 : 0;
  
+  const LangToggle = () => (
+    <div className="sg-lang-toggle">
+      <button className={`sg-lang-btn${lang === 'es' ? ' active' : ''}`} onClick={() => setLang('es')}>ES</button>
+      <button className={`sg-lang-btn${lang === 'en' ? ' active' : ''}`} onClick={() => setLang('en')}>EN</button>
+    </div>
+  );
+ 
+  const Header = () => (
+    <div className="sg-header">
+      <img src="/imagenes/genora-logo-white.png" alt="Genora" className="sg-header-logo" />
+      <LangToggle />
+    </div>
+  );
+ 
+  // ---- Pantallas de acceso (token ausente / conflicto de dispositivo) ----
+  if (accessState !== 'granted') {
+    return (
+      <div className="sg-root">
+        <style>{inlineStyles}</style>
+        <Header />
+        <div className="sg-content">
+          <div className="sg-orb-wrap">
+            <video src="/imagenes/adn-animado.mp4" autoPlay loop muted playsInline className="sg-orb-img sg-gold-filter" />
+          </div>
+ 
+          {accessState === 'no-token' && (
+            <>
+              <h1 className="sg-title">{t.sanctuaryTitle}</h1>
+              <p className="sg-subtext">{t.noTokenMsg}</p>
+            </>
+          )}
+ 
+          {accessState === 'device-conflict' && (
+            <>
+              <h1 className="sg-title">{t.sanctuaryTitle}</h1>
+              <p className="sg-subtext">
+                {t.conflictMsg1}<br /><br />
+                {t.conflictMsg2}
+              </p>
+              <a
+                className="sg-btn-primary"
+                style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center' }}
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${lang === 'es' ? WHATSAPP_MSG_ES : WHATSAPP_MSG_EN}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t.contactBtn}
+              </a>
+            </>
+          )}
+ 
+          {accessState === 'checking' && (
+            <p className="sg-subtext">{t.checking}</p>
+          )}
+        </div>
+      </div>
+    );
+  }
+ 
   return (
     <div className="sg-root">
       <style>{inlineStyles}</style>
+      <Header />
       <div className="sg-content">
  
-        {/* ---------- VISTA 1: CANDADO / ACCESO VIP ---------- */}
-        {view === 'lock' && (
-          <>
-            <div className="sg-orb-wrap">
-              <video src="/imagenes/adn-animado.mp4" autoPlay loop muted playsInline className="sg-orb-img" style={{ objectFit: 'contain' }} />
-            </div>
-            <h1 className="sg-title">SANTUARIO GENORA</h1>
-            <p className="sg-subtext">Espacio reservado para herramientas de acompañamiento y sanación biológica.</p>
-            <form onSubmit={handleAccessSubmit} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <input
-                className="sg-input"
-                type="text"
-                placeholder="Ingresa tu código de acceso"
-                value={codeInput}
-                onChange={(e) => { setCodeInput(e.target.value); if (error) setError(''); }}
-              />
-              <div className="sg-error">{error}</div>
-              <button type="submit" className="sg-btn-primary">ACCEDER</button>
-            </form>
-          </>
-        )}
- 
-        {/* ---------- VISTA 2: CATÁLOGO EXCLUSIVO ---------- */}
+        {/* ---------- VISTA: CATÁLOGO ---------- */}
         {view === 'catalog' && (
           <>
-            <div className="sg-orb-wrap" style={{ width: '110px', height: '110px', marginBottom: '18px' }}>
-              <video src="/imagenes/adn-animado.mp4" autoPlay loop muted playsInline className="sg-orb-img" style={{ objectFit: 'contain', fontSize: '30px' }} />
+            <div className="sg-orb-wrap" style={{ width: '96px', height: '96px', marginBottom: '18px' }}>
+              <video src="/imagenes/adn-animado.mp4" autoPlay loop muted playsInline className="sg-orb-img sg-gold-filter" />
             </div>
             <div className="sg-greeting">
-              <div className="sg-greeting-hi">BIENVENIDA A TU ESPACIO</div>
-              <div className="sg-greeting-title">Santuario GENORA</div>
+              <div className="sg-greeting-hi">{t.welcomeHi}</div>
+              <div className="sg-greeting-title">{t.sanctuaryTitle}</div>
             </div>
             <div className="sg-card-list">
               {TRACKS.map((track, i) => (
-                <div key={track.id} className="sg-card" style={{ animationDelay: `${i * 0.08}s` }} onClick={() => openTrack(track)}>
-                  <div className="sg-card-icon">{track.type === 'video' ? '▶' : '♫'}</div>
+                <div key={track.id} className="sg-card" style={{ animationDelay: `${i * 0.06}s` }} onClick={() => openTrack(track)}>
+                  <div className="sg-card-icon">
+                    <video src="/imagenes/adn-animado.mp4" autoPlay loop muted playsInline className="sg-gold-filter" />
+                  </div>
                   <div className="sg-card-body">
                     <div className="sg-card-title">{track.title}</div>
                     <div className="sg-card-desc">{track.description}</div>
@@ -492,18 +586,23 @@ export default function SantuarioGenoraApp() {
           </>
         )}
  
-        {/* ---------- VISTA 3: REPRODUCTOR TEMPLO DORADO ---------- */}
+        {/* ---------- VISTA: REPRODUCTOR TEMPLO DORADO ---------- */}
         {view === 'player' && selectedTrack && (
           <div className="sg-player">
-            <button className="sg-back" onClick={backToCatalog}>← Volver al catálogo</button>
+            <button className="sg-back" onClick={backToCatalog} aria-label="back">←</button>
  
             <div className="sg-templo-orb-container">
               <TemploWave paused={!isPlaying} />
-              <div className="sg-templo-core">{selectedTrack.type === 'video' ? '▶' : '♫'}</div>
+              <div className="sg-templo-core">
+                <video src="/imagenes/adn-animado.mp4" autoPlay loop muted playsInline className="sg-gold-filter" />
+              </div>
             </div>
  
             <div className="sg-player-track-title">{selectedTrack.title}</div>
             <div className="sg-player-track-desc">{selectedTrack.description}</div>
+            <div className="sg-player-duration">
+              {trackDuration > 0 ? formatTime(trackDuration) : selectedTrack.duration}
+            </div>
  
             {selectedTrack.type === 'audio' ? (
               <audio
@@ -554,16 +653,14 @@ export default function SantuarioGenoraApp() {
         )}
       </div>
  
-      {view !== 'lock' && (
-        <a
-          className="sg-whatsapp-btn"
-          href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          ✦ ¿Necesitas acompañamiento o un nuevo código? Contacta a Pamela
-        </a>
-      )}
+      <a
+        className="sg-whatsapp-btn"
+        href={`https://wa.me/${WHATSAPP_NUMBER}?text=${lang === 'es' ? WHATSAPP_MSG_ES : WHATSAPP_MSG_EN}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {t.whatsappFooter}
+      </a>
     </div>
   );
 }
