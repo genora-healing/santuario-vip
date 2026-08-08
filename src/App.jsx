@@ -23,6 +23,7 @@ const T = {
     codePlaceholder: 'Código de acceso',
     enterBtn: 'Entrar',
     codeError: 'Código no válido.',
+    privacyNote: '✦ Espacio exclusivo para miembros VIP. Tu código y enlace de acceso son de uso personal e intransferible.',
     conflictMsg1: '✦ Este enlace de acompañamiento exclusivo ya se encuentra activo en otro dispositivo.',
     conflictMsg2: 'Si cambiaste de teléfono o necesitas asistencia, contacta directamente a Pamela.',
     contactBtn: '✦ Contactar a Pamela',
@@ -37,6 +38,7 @@ const T = {
     codePlaceholder: 'Access code',
     enterBtn: 'Enter',
     codeError: 'Invalid code.',
+    privacyNote: '✦ Exclusive space for VIP members. Your code and access link are personal and non-transferable.',
     conflictMsg1: '✦ This exclusive companion link is already active on another device.',
     conflictMsg2: 'If you changed phones or need assistance, contact Pamela directly.',
     contactBtn: '✦ Contact Pamela',
@@ -556,6 +558,7 @@ export default function SantuarioGenoraApp() {
                 />
                 {codeError && <p style={{ color: '#ff8a8a', fontSize: '11.5px', margin: 0 }}>{codeError}</p>}
                 <button type="submit" className="sg-btn-primary" style={{ maxWidth: '260px' }}>{t.enterBtn}</button>
+                <p style={{ fontSize: '10px', letterSpacing: '0.3px', color: 'rgba(212,175,55,0.55)', fontWeight: 300, textAlign: 'center', maxWidth: '280px', lineHeight: 1.6, margin: '4px 0 0' }}>{t.privacyNote}</p>
               </form>
             </>
           )}
