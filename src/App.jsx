@@ -83,7 +83,7 @@ const inlineStyles = `
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 70px 20px 100px;
+    padding: 40px 20px 100px;
     position: relative;
     overflow-x: hidden;
   }
@@ -99,34 +99,27 @@ const inlineStyles = `
  
   /* ---- Header fijo: logo + selector de idioma ---- */
   .sg-header {
-    position: fixed; top: 0; left: 0; right: 0;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px clamp(14px, 4vw, 24px);
-    z-index: 20;
-    pointer-events: none;
-    box-sizing: border-box;
+    display: flex; align-items: flex-start; justify-content: space-between;
     width: 100%;
-    max-width: 100vw;
+    margin-bottom: 16px;
+    padding-top: 4px;
   }
-  .sg-header-logo { max-height: 20px; max-width: 110px; width: auto; object-fit: contain; opacity: 0.85; pointer-events: auto; }
+  .sg-header-logo { height: 40px; width: 40px; border-radius: 50%; object-fit: contain; }
   .sg-lang-toggle {
-    pointer-events: auto;
-    display: flex; align-items: center; gap: 0;
+    display: flex;
     border: 1px solid rgba(212,175,55,0.35);
     border-radius: 20px;
     overflow: hidden;
-    background: rgba(2,6,23,0.6);
-    backdrop-filter: blur(6px);
   }
   .sg-lang-btn {
     background: none; border: none; cursor: pointer;
-    color: rgba(245,237,220,0.5);
+    color: rgba(245,237,220,0.35);
     font-family: 'Montserrat', sans-serif;
-    font-size: 11px; font-weight: 600; letter-spacing: 1px;
-    padding: 6px 12px;
-    transition: all 0.25s ease;
+    font-size: 10px; font-weight: 200; letter-spacing: 2px;
+    padding: 5px 12px;
+    transition: all 0.2s ease;
   }
-  .sg-lang-btn.active { background: ${GOLD}; color: #020617; }
+  .sg-lang-btn.active { background: rgba(212,175,55,0.1); color: ${GOLD}; }
  
   @keyframes aura-gold-santuario {
     0%, 100% { transform: scale(1); box-shadow: 0 0 50px 0 rgba(212,175,55,0.35), 0 0 100px 0 rgba(212,175,55,0.18); }
@@ -209,15 +202,7 @@ const inlineStyles = `
     animation: fadeInUp 0.5s ease backwards;
   }
   .sg-card:hover { border-color: rgba(212,175,55,0.45); background: rgba(212,175,55,0.06); }
-  .sg-card-icon {
-    flex-shrink: 0;
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    overflow: hidden;
-    background: rgba(2,6,23,0.9);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .sg-card-icon video { width: 100%; height: 100%; object-fit: cover; }
+  .sg-card-type { font-size: 9.5px; color: rgba(212,175,55,0.55); letter-spacing: 2px; font-weight: 300; margin-bottom: 4px; text-transform: uppercase; }
   .sg-card-body { flex: 1; min-width: 0; }
   .sg-card-title { font-size: 13.5px; color: #f5eddc; font-weight: 500; margin-bottom: 2px; letter-spacing: 0.2px; }
   .sg-card-desc { font-size: 11px; color: rgba(245,237,220,0.45); font-weight: 300; line-height: 1.3; margin-bottom: 3px; }
@@ -544,8 +529,8 @@ export default function SantuarioGenoraApp() {
     return (
       <div className="sg-root">
         <style>{inlineStyles}</style>
-        <Header />
         <div className="sg-content">
+          <Header />
           <div className="sg-orb-wrap">
             <video src="/imagenes/adn-animado.mp4" autoPlay loop muted playsInline className="sg-orb-img sg-gold-filter" />
           </div>
@@ -615,10 +600,8 @@ export default function SantuarioGenoraApp() {
             <div className="sg-card-list">
               {TRACKS.map((track, i) => (
                 <div key={track.id} className="sg-card" style={{ animationDelay: `${i * 0.06}s` }} onClick={() => openTrack(track)}>
-                  <div className="sg-card-icon">
-                    <video src="/imagenes/adn-animado.mp4" autoPlay loop muted playsInline className="sg-gold-filter" />
-                  </div>
                   <div className="sg-card-body">
+                    <div className="sg-card-type">{track.type === 'video' ? '❖ VIDEO' : '© AUDIO'}</div>
                     <div className="sg-card-title">{track.title}</div>
                     <div className="sg-card-desc">{track.description}</div>
                     <div className="sg-card-duration">{track.duration}</div>
