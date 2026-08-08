@@ -19,38 +19,30 @@ const T = {
   es: {
     sanctuaryTitle: 'SANTUARIO GENORA',
     noTokenMsg: 'Este espacio requiere un enlace de acceso VIP personalizado.',
-    orCode: 'o ingresa tu código de acceso',
-    codePlaceholder: 'Código de acceso',
     enterBtn: 'Entrar',
-    codeError: 'Código no válido.',
     privacyNote: '✦ Espacio exclusivo para miembros VIP. Tu código y enlace de acceso son de uso personal e intransferible.',
     conflictMsg1: '✦ Este enlace de acompañamiento exclusivo ya se encuentra activo en otro dispositivo.',
     conflictMsg2: 'Si cambiaste de teléfono o necesitas asistencia, contacta directamente a Pamela.',
     contactBtn: '✦ Contactar a Pamela',
     checking: 'Sintonizando tu acceso...',
     welcomeHi: 'BIENVENIDA A TU ESPACIO',
+    welcomeSubtext: 'Tu espacio personal de frecuencias te espera.',
     whatsappFooter: '✦ ¿Necesitas acompañamiento o un nuevo código? Contacta a Pamela',
   },
   en: {
     sanctuaryTitle: 'SANTUARIO GENORA',
     noTokenMsg: 'This space requires a personalized VIP access link.',
-    orCode: 'or enter your access code',
-    codePlaceholder: 'Access code',
     enterBtn: 'Enter',
-    codeError: 'Invalid code.',
     privacyNote: '✦ Exclusive space for VIP members. Your code and access link are personal and non-transferable.',
     conflictMsg1: '✦ This exclusive companion link is already active on another device.',
     conflictMsg2: 'If you changed phones or need assistance, contact Pamela directly.',
     contactBtn: '✦ Contact Pamela',
     checking: 'Tuning in your access...',
     welcomeHi: 'WELCOME TO YOUR SPACE',
+    welcomeSubtext: 'Your personal frequency space awaits.',
     whatsappFooter: '✦ Need support or a new code? Contact Pamela',
   },
 };
- 
-// ---- Código maestro de respaldo (para pruebas/administración) ----
-// Los pacientes usan su link con token; este código es solo un acceso alterno.
-const MASTER_CODE = 'GENORA2026';
  
  
 const TRACKS = [
@@ -413,8 +405,7 @@ export default function SantuarioGenoraApp() {
   const [view, setView] = useState('catalog'); // 'catalog' | 'player'
   const [accessState, setAccessState] = useState('checking'); // 'checking' | 'no-token' | 'device-conflict' | 'granted'
   const [lang, setLang] = useState('es');
-  const [codeInput, setCodeInput] = useState('');
-  const [codeError, setCodeError] = useState('');
+  const [entered, setEntered] = useState(false);
   const [selectedTrack, setSelectedTrack] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -448,16 +439,6 @@ export default function SantuarioGenoraApp() {
       setAccessState('device-conflict');
     }
   }, []);
- 
-  const handleCodeSubmit = (e) => {
-    e.preventDefault();
-    if (codeInput.trim().toUpperCase() === MASTER_CODE) {
-      setCodeError('');
-      setAccessState('granted');
-    } else {
-      setCodeError(t.codeError);
-    }
-  };
  
   const openTrack = (track) => {
     setSelectedTrack(track);
@@ -533,7 +514,7 @@ export default function SantuarioGenoraApp() {
   );
  
   // ---- Pantallas de acceso (token ausente / conflicto de dispositivo) ----
-  if (accessState !== 'granted') {
+  if (accessState !== 'granted' || !entered) {
     return (
       <div className="sg-root">
         <style>{inlineStyles}</style>
@@ -547,19 +528,15 @@ export default function SantuarioGenoraApp() {
             <>
               <h1 className="sg-title">{t.sanctuaryTitle}</h1>
               <p className="sg-subtext">{t.noTokenMsg}</p>
-              <p style={{ fontSize: '11px', letterSpacing: '1px', color: 'rgba(212,175,55,0.5)', marginBottom: '14px', textTransform: 'uppercase' }}>{t.orCode}</p>
-              <form onSubmit={handleCodeSubmit} style={{ width: '100%', maxWidth: '260px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                <input
-                  type="text"
-                  value={codeInput}
-                  onChange={(e) => { setCodeInput(e.target.value); if (codeError) setCodeError(''); }}
-                  placeholder={t.codePlaceholder}
-                  style={{ width: '100%', background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.3)', borderRadius: '24px', padding: '11px 18px', color: '#f5eddc', fontSize: '13px', textAlign: 'center', outline: 'none', letterSpacing: '1px' }}
-                />
-                {codeError && <p style={{ color: '#ff8a8a', fontSize: '11.5px', margin: 0 }}>{codeError}</p>}
-                <button type="submit" className="sg-btn-primary" style={{ maxWidth: '260px' }}>{t.enterBtn}</button>
-                <p style={{ fontSize: '10px', letterSpacing: '0.3px', color: 'rgba(212,175,55,0.55)', fontWeight: 300, textAlign: 'center', maxWidth: '280px', lineHeight: 1.6, margin: '4px 0 0' }}>{t.privacyNote}</p>
-              </form>
+            </>
+          )}
+ 
+          {accessState === 'granted' && !entered && (
+            <>
+              <h1 className="sg-title">{t.sanctuaryTitle}</h1>
+              <p className="sg-subtext">{t.welcomeSubtext}</p>
+              <button className="sg-btn-primary" style={{ maxWidth: '260px' }} onClick={() => setEntered(true)}>{t.enterBtn}</button>
+              <p style={{ fontSize: '10px', letterSpacing: '0.3px', color: 'rgba(212,175,55,0.55)', fontWeight: 300, textAlign: 'center', maxWidth: '280px', lineHeight: 1.6, margin: '14px 0 0' }}>{t.privacyNote}</p>
             </>
           )}
  
