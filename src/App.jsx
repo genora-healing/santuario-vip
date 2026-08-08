@@ -8,6 +8,9 @@ import React, { useState, useEffect, useRef } from 'react';
 const GOLD = '#d4af37';
 const BG = '#020617';
  
+// ---- CONFIGURACIÓN: códigos válidos ----
+const VALID_CODES = ['GENORA2026'];
+ 
 // ---- CONFIGURACIÓN: WhatsApp de contacto ----
 // ⚠️ Reemplaza por tu número real con código de país, sin +, sin espacios (ej: 573001234567)
 const WHATSAPP_NUMBER = '573000000000';
@@ -16,30 +19,15 @@ const WHATSAPP_MSG = encodeURIComponent('Hola Pamela, necesito acompañamiento o
 // ---- CATÁLOGO DE EJEMPLO ----
 // Reemplaza src por la URL real de tu bucket S3 (genora-global-frecuencias, us-east-2)
 const TRACKS = [
-  {
-    id: 't1',
-    type: 'audio',
-    title: 'Recalibración del Campo Áurico',
-    description: 'Frecuencia de alta fidelidad para restaurar tu campo energético.',
-    duration: '18:00',
-    src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/santuario/recalibracion-aurico.wav',
-  },
-  {
-    id: 't2',
-    type: 'audio',
-    title: 'Sanación Biológica Profunda',
-    description: 'Acompañamiento sonoro para procesos de recalibración celular.',
-    duration: '24:00',
-    src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/santuario/sanacion-biologica.wav',
-  },
-  {
-    id: 't3',
-    type: 'video',
-    title: 'Meditación Guiada · Diseño Original',
-    description: 'Video de meditación para reconectar con tu diseño original.',
-    duration: '32:00',
-    src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/santuario/meditacion-diseno-original.mp4',
-  },
+  { id: 'vital-restore', type: 'audio', title: 'Vital Restore', description: 'Restauracion vital y recuperacion de energia.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/vital-restore.wav' },
+  { id: 'energy-full-reset', type: 'audio', title: 'Energy Full Reset', description: 'Limpieza de oscuridad y recalibracion de energia.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/energy-full-reset.wav' },
+  { id: 'business-magnet', type: 'audio', title: 'Business Magnet', description: 'Frecuencia para atraer clientes y dinero, expansion de tu empresa.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/business-magnet.wav' },
+  { id: 'lucky-flow', type: 'audio', title: 'Lucky Flow', description: 'Frecuencia para ganar la loteria, ganar dinero y sintonizar con la buena suerte — el poder interior.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/lucky-flow.wav' },
+  { id: 'lumina', type: 'audio', title: 'Lumina', description: 'Claridad mental.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/lumina.wav' },
+  { id: 'momentum', type: 'audio', title: 'Momentum', description: 'Frecuencia para deshacer situaciones y facilitar cambios — tambien asociada a ganar loteria.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/momentum.wav' },
+  { id: 'crystal-reset', type: 'audio', title: 'Crystal Reset', description: 'Purificacion de cristales.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/crystal-reset.wav' },
+  { id: 'mental-flow-balance', type: 'audio', title: 'Mental Flow Balance', description: 'Equilibrio mental, desactivacion de dialogos mentales.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/mental-flow-balance.wav' },
+  { id: 'safe-within', type: 'audio', title: 'Safe Within', description: 'Desactivacion de miedos y ansiedades profundas, recuperacion del equilibrio interior.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/safe-within.wav' },
 ];
  
 // ---- Los 5 anillos del mandala (idénticos a los del reproductor principal) ----
@@ -375,8 +363,9 @@ function formatTime(sec) {
 }
  
 export default function SantuarioGenoraApp() {
-  const [view, setView] = useState('catalog'); // 'catalog' | 'player'  (el candado ahora vive en accessState)
-  const [accessState, setAccessState] = useState('checking'); // 'checking' | 'no-token' | 'device-conflict' | 'granted'
+  const [view, setView] = useState('lock'); // 'lock' | 'catalog' | 'player'
+  const [codeInput, setCodeInput] = useState('');
+  const [error, setError] = useState('');
   const [selectedTrack, setSelectedTrack] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -386,30 +375,16 @@ export default function SantuarioGenoraApp() {
   const mediaRef = useRef(null);
   const limitTimeoutRef = useRef(null);
  
-  // ---- Nivel 1: Token único en la URL + anclaje al dispositivo (localStorage) ----
-  // NOTA HONESTA: esto detecta y bloquea que ESTE MISMO navegador pruebe varios
-  // enlaces distintos. NO puede detectar que el MISMO enlace se abrió en OTRO
-  // dispositivo, porque localStorage no viaja entre dispositivos — eso requiere
-  // una validación en un servidor (ver nota que te dejé en el chat).
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
- 
-    if (!token) {
-      setAccessState('no-token');
-      return;
-    }
- 
-    const boundToken = localStorage.getItem('genora_bound_token');
-    if (!boundToken) {
-      localStorage.setItem('genora_bound_token', token);
-      setAccessState('granted');
-    } else if (boundToken === token) {
-      setAccessState('granted');
+  const handleAccessSubmit = (e) => {
+    e.preventDefault();
+    const clean = codeInput.trim().toUpperCase();
+    if (VALID_CODES.includes(clean)) {
+      setError('');
+      setView('catalog');
     } else {
-      setAccessState('device-conflict');
+      setError('Código no verificado. Solicita tu código de acceso a Pamela.');
     }
-  }, []);
+  };
  
   const openTrack = (track) => {
     setSelectedTrack(track);
@@ -464,60 +439,38 @@ export default function SantuarioGenoraApp() {
  
   const progressPct = trackDuration ? (currentTime / trackDuration) * 100 : 0;
  
-  // ---- Pantallas de acceso (token ausente / conflicto de dispositivo) ----
-  if (accessState !== 'granted') {
-    return (
-      <div className="sg-root">
-        <style>{inlineStyles}</style>
-        <div className="sg-content">
-          <div className="sg-orb-wrap">
-            <div className="sg-orb-img">✦</div>
-          </div>
- 
-          {accessState === 'no-token' && (
-            <>
-              <h1 className="sg-title">SANTUARIO GENORA</h1>
-              <p className="sg-subtext">Este espacio requiere un enlace de acceso VIP personalizado.</p>
-            </>
-          )}
- 
-          {accessState === 'device-conflict' && (
-            <>
-              <h1 className="sg-title">SANTUARIO GENORA</h1>
-              <p className="sg-subtext">
-                ✦ Este enlace de acompañamiento exclusivo ya se encuentra activo en otro dispositivo.<br /><br />
-                Si cambiaste de teléfono o necesitas asistencia, contacta directamente a Pamela.
-              </p>
-              <a
-                className="sg-btn-primary"
-                style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center' }}
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                ✦ Contactar a Pamela
-              </a>
-            </>
-          )}
- 
-          {accessState === 'checking' && (
-            <p className="sg-subtext">Sintonizando tu acceso...</p>
-          )}
-        </div>
-      </div>
-    );
-  }
- 
   return (
     <div className="sg-root">
       <style>{inlineStyles}</style>
       <div className="sg-content">
  
+        {/* ---------- VISTA 1: CANDADO / ACCESO VIP ---------- */}
+        {view === 'lock' && (
+          <>
+            <div className="sg-orb-wrap">
+              <video src="/imagenes/adn-animado.mp4" autoPlay loop muted playsInline className="sg-orb-img" style={{ objectFit: 'contain' }} />
+            </div>
+            <h1 className="sg-title">SANTUARIO GENORA</h1>
+            <p className="sg-subtext">Espacio reservado para herramientas de acompañamiento y sanación biológica.</p>
+            <form onSubmit={handleAccessSubmit} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <input
+                className="sg-input"
+                type="text"
+                placeholder="Ingresa tu código de acceso"
+                value={codeInput}
+                onChange={(e) => { setCodeInput(e.target.value); if (error) setError(''); }}
+              />
+              <div className="sg-error">{error}</div>
+              <button type="submit" className="sg-btn-primary">ACCEDER</button>
+            </form>
+          </>
+        )}
+ 
         {/* ---------- VISTA 2: CATÁLOGO EXCLUSIVO ---------- */}
         {view === 'catalog' && (
           <>
             <div className="sg-orb-wrap" style={{ width: '110px', height: '110px', marginBottom: '18px' }}>
-              <div className="sg-orb-img" style={{ fontSize: '30px' }}>✦</div>
+              <video src="/imagenes/adn-animado.mp4" autoPlay loop muted playsInline className="sg-orb-img" style={{ objectFit: 'contain', fontSize: '30px' }} />
             </div>
             <div className="sg-greeting">
               <div className="sg-greeting-hi">BIENVENIDA A TU ESPACIO</div>
@@ -601,7 +554,7 @@ export default function SantuarioGenoraApp() {
         )}
       </div>
  
-      {accessState === 'granted' && (
+      {view !== 'lock' && (
         <a
           className="sg-whatsapp-btn"
           href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG}`}
