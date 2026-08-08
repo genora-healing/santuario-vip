@@ -104,7 +104,7 @@ const inlineStyles = `
     margin-bottom: 16px;
     padding-top: 4px;
   }
-  .sg-header-logo { height: 40px; width: 40px; border-radius: 50%; object-fit: contain; }
+  .sg-header-logo { height: 52px; width: 52px; border-radius: 50%; object-fit: contain; }
   .sg-lang-toggle {
     display: flex;
     border: 1px solid rgba(212,175,55,0.35);
@@ -122,8 +122,8 @@ const inlineStyles = `
   .sg-lang-btn.active { background: rgba(212,175,55,0.1); color: ${GOLD}; }
  
   @keyframes aura-gold-santuario {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 50px 0 rgba(212,175,55,0.35), 0 0 100px 0 rgba(212,175,55,0.18); }
-    50% { transform: scale(1.03); box-shadow: 0 0 90px 10px rgba(212,175,55,0.7), 0 0 180px 20px rgba(212,175,55,0.4), 0 0 300px 40px rgba(212,175,55,0.18); }
+    0%, 100% { transform: scale(1); box-shadow: 0 0 50px 0 rgba(230,205,150,0.3), 0 0 100px 0 rgba(230,205,150,0.15); }
+    50% { transform: scale(1.03); box-shadow: 0 0 90px 10px rgba(230,205,150,0.6), 0 0 180px 20px rgba(230,205,150,0.35), 0 0 300px 40px rgba(230,205,150,0.15); }
   }
   .sg-orb-wrap {
     width: 140px; height: 140px;
@@ -132,7 +132,8 @@ const inlineStyles = `
     overflow: visible;
   }
   .sg-gold-filter {
-    filter: sepia(1) saturate(4.5) hue-rotate(-15deg) brightness(1.05) contrast(1.05);
+    /* Dorado champan: menos saturado/anaranjado, mas claro y brillante */
+    filter: sepia(0.55) saturate(1.6) hue-rotate(8deg) brightness(1.35) contrast(0.92);
   }
   .sg-orb-img {
     width: 100%; height: 100%;
@@ -187,48 +188,51 @@ const inlineStyles = `
   .sg-greeting-hi { font-family: 'Montserrat', sans-serif; font-size: 11px; letter-spacing: 3.5px; color: rgba(212,175,55,0.7); text-transform: uppercase; margin-bottom: 6px; font-weight: 500; }
   .sg-greeting-title { font-family: 'Montserrat', sans-serif; font-size: 19px; color: #f5eddc; font-weight: 500; letter-spacing: 1px; }
  
-  /* ---- Tarjetas compactas y delgadas ---- */
-  .sg-card-list { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+  /* ---- Tarjetas: mismo lenguaje visual que la app original (TrackCard) ---- */
+  .sg-card-list { width: 100%; display: flex; flex-direction: column; gap: 10px; align-items: center; }
   .sg-card {
-    background: rgba(212,175,55,0.03);
-    border: 1px solid rgba(212,175,55,0.18);
-    border-radius: 14px;
-    padding: 12px 14px;
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-left: 4px solid rgba(230,205,150,0.85);
+    border-radius: 28px;
+    padding: 16px 20px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     cursor: pointer;
     transition: all 0.25s ease;
     animation: fadeInUp 0.5s ease backwards;
   }
-  .sg-card:hover { border-color: rgba(212,175,55,0.45); background: rgba(212,175,55,0.06); }
-  .sg-card-type { font-size: 9.5px; color: rgba(212,175,55,0.55); letter-spacing: 2px; font-weight: 300; margin-bottom: 4px; text-transform: uppercase; }
-  .sg-card-body { flex: 1; min-width: 0; }
-  .sg-card-title { font-size: 13.5px; color: #f5eddc; font-weight: 500; margin-bottom: 2px; letter-spacing: 0.2px; }
-  .sg-card-desc { font-size: 11px; color: rgba(245,237,220,0.45); font-weight: 300; line-height: 1.3; margin-bottom: 3px; }
-  .sg-card-duration { font-size: 10px; color: rgba(212,175,55,0.6); letter-spacing: 0.5px; font-weight: 300; }
+  .sg-card:active { transform: scale(0.98); }
+  .sg-card:hover { background: rgba(230,205,150,0.05); }
+  .sg-card-type { font-size: 9.5px; color: rgba(230,205,150,0.6); letter-spacing: 2px; font-weight: 300; margin-bottom: 4px; text-transform: uppercase; }
+  .sg-card-body { flex: 1; min-width: 0; text-align: left; }
+  .sg-card-title { font-size: 14px; color: #f5eddc; font-weight: 500; margin-bottom: 3px; letter-spacing: 0.2px; }
+  .sg-card-desc { font-size: 11px; color: rgba(245,237,220,0.5); font-weight: 300; line-height: 1.4; }
   .sg-card-play {
     flex-shrink: 0;
     width: 24px; height: 24px;
     display: flex; align-items: center; justify-content: center;
-    color: ${GOLD};
-    font-size: 13px;
-    opacity: 0.8;
+    color: #e6cd96;
+    font-size: 15px;
   }
  
   .sg-back {
     align-self: flex-start;
-    background: none;
-    border: none;
-    color: rgba(212,175,55,0.7);
-    font-size: 18px;
+    background: rgba(230,205,150,0.08);
+    border: 1px solid rgba(230,205,150,0.5);
+    color: #e6cd96;
+    font-size: 20px;
     cursor: pointer;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     display: flex; align-items: center; justify-content: center;
-    width: 32px; height: 32px;
-    transition: color 0.2s ease;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
   }
-  .sg-back:hover { color: ${GOLD}; }
+  .sg-back:hover { border-color: ${GOLD}; color: ${GOLD}; background: rgba(230,205,150,0.15); }
  
   /* ---- Reproductor Templo Dorado ---- */
   .sg-player { display: flex; flex-direction: column; align-items: center; width: 100%; padding-top: 4px; }
@@ -295,7 +299,7 @@ const inlineStyles = `
   }
   .sg-templo-wave-halo {
     fill: none;
-    stroke: rgba(212, 175, 55, 1);
+    stroke: rgba(230, 205, 150, 0.9);
     stroke-width: 14px;
     filter: blur(5px);
     transform-box: fill-box; transform-origin: 50% 50%;
@@ -305,10 +309,10 @@ const inlineStyles = `
   }
   .sg-templo-wave-line {
     fill: none;
-    stroke: #ffe9b3;
+    stroke: #f5ecd8;
     stroke-width: 1.5px;
     vector-effect: non-scaling-stroke;
-    filter: drop-shadow(0 0 6px #d4af37) drop-shadow(0 0 14px rgba(212,175,55,0.5));
+    filter: drop-shadow(0 0 6px #d9c295) drop-shadow(0 0 14px rgba(230,205,150,0.45));
     transform: scale(0.93) translateZ(0);
     backface-visibility: hidden;
     transform-box: fill-box; transform-origin: 50% 50%;
@@ -604,7 +608,6 @@ export default function SantuarioGenoraApp() {
                     <div className="sg-card-type">{track.type === 'video' ? '❖ VIDEO' : '© AUDIO'}</div>
                     <div className="sg-card-title">{track.title}</div>
                     <div className="sg-card-desc">{track.description}</div>
-                    <div className="sg-card-duration">{track.duration}</div>
                   </div>
                   <div className="sg-card-play">▶</div>
                 </div>
@@ -616,7 +619,7 @@ export default function SantuarioGenoraApp() {
         {/* ---------- VISTA: REPRODUCTOR TEMPLO DORADO ---------- */}
         {view === 'player' && selectedTrack && (
           <div className="sg-player">
-            <button className="sg-back" onClick={backToCatalog} aria-label="back">←</button>
+            <button className="sg-back" onClick={backToCatalog} aria-label="back">‹</button>
  
             <div className="sg-templo-orb-container">
               <TemploWave paused={!isPlaying} />
