@@ -19,6 +19,10 @@ const T = {
   es: {
     sanctuaryTitle: 'SANTUARIO GENORA',
     noTokenMsg: 'Este espacio requiere un enlace de acceso VIP personalizado.',
+    orCode: 'o ingresa tu código de acceso',
+    codePlaceholder: 'Código de acceso',
+    enterBtn: 'Entrar',
+    codeError: 'Código no válido.',
     conflictMsg1: '✦ Este enlace de acompañamiento exclusivo ya se encuentra activo en otro dispositivo.',
     conflictMsg2: 'Si cambiaste de teléfono o necesitas asistencia, contacta directamente a Pamela.',
     contactBtn: '✦ Contactar a Pamela',
@@ -29,6 +33,10 @@ const T = {
   en: {
     sanctuaryTitle: 'SANTUARIO GENORA',
     noTokenMsg: 'This space requires a personalized VIP access link.',
+    orCode: 'or enter your access code',
+    codePlaceholder: 'Access code',
+    enterBtn: 'Enter',
+    codeError: 'Invalid code.',
     conflictMsg1: '✦ This exclusive companion link is already active on another device.',
     conflictMsg2: 'If you changed phones or need assistance, contact Pamela directly.',
     contactBtn: '✦ Contact Pamela',
@@ -38,7 +46,11 @@ const T = {
   },
 };
  
-// ---- CATÁLOGO REAL (sincronizado con SANCTUARY_TOOLS de la app principal) ----
+// ---- Código maestro de respaldo (para pruebas/administración) ----
+// Los pacientes usan su link con token; este código es solo un acceso alterno.
+const MASTER_CODE = 'GENORA2026';
+ 
+ 
 const TRACKS = [
   { id: 'vital-restore', type: 'audio', title: 'Vital Restore', description: 'Restauracion vital y recuperacion de energia.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/vital-restore.wav' },
   { id: 'energy-full-reset', type: 'audio', title: 'Energy Full Reset', description: 'Limpieza de oscuridad y recalibracion de energia.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/energy-full-reset.wav' },
@@ -89,11 +101,14 @@ const inlineStyles = `
   .sg-header {
     position: fixed; top: 0; left: 0; right: 0;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 22px;
+    padding: 16px clamp(14px, 4vw, 24px);
     z-index: 20;
     pointer-events: none;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100vw;
   }
-  .sg-header-logo { height: 22px; opacity: 0.85; pointer-events: auto; }
+  .sg-header-logo { max-height: 20px; max-width: 110px; width: auto; object-fit: contain; opacity: 0.85; pointer-events: auto; }
   .sg-lang-toggle {
     pointer-events: auto;
     display: flex; align-items: center; gap: 0;
@@ -405,6 +420,8 @@ export default function SantuarioGenoraApp() {
   const [view, setView] = useState('catalog'); // 'catalog' | 'player'
   const [accessState, setAccessState] = useState('checking'); // 'checking' | 'no-token' | 'device-conflict' | 'granted'
   const [lang, setLang] = useState('es');
+  const [codeInput, setCodeInput] = useState('');
+  const [codeError, setCodeError] = useState('');
   const [selectedTrack, setSelectedTrack] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -438,6 +455,16 @@ export default function SantuarioGenoraApp() {
       setAccessState('device-conflict');
     }
   }, []);
+ 
+  const handleCodeSubmit = (e) => {
+    e.preventDefault();
+    if (codeInput.trim().toUpperCase() === MASTER_CODE) {
+      setCodeError('');
+      setAccessState('granted');
+    } else {
+      setCodeError(t.codeError);
+    }
+  };
  
   const openTrack = (track) => {
     setSelectedTrack(track);
@@ -502,7 +529,12 @@ export default function SantuarioGenoraApp() {
  
   const Header = () => (
     <div className="sg-header">
-      <img src="/imagenes/genora-logo-white.png" alt="Genora" className="sg-header-logo" />
+      <img
+        src="/imagenes/genora-logo-white.png"
+        alt="Genora"
+        className="sg-header-logo"
+        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+      />
       <LangToggle />
     </div>
   );
@@ -522,6 +554,18 @@ export default function SantuarioGenoraApp() {
             <>
               <h1 className="sg-title">{t.sanctuaryTitle}</h1>
               <p className="sg-subtext">{t.noTokenMsg}</p>
+              <p style={{ fontSize: '11px', letterSpacing: '1px', color: 'rgba(212,175,55,0.5)', marginBottom: '14px', textTransform: 'uppercase' }}>{t.orCode}</p>
+              <form onSubmit={handleCodeSubmit} style={{ width: '100%', maxWidth: '260px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+                <input
+                  type="text"
+                  value={codeInput}
+                  onChange={(e) => { setCodeInput(e.target.value); if (codeError) setCodeError(''); }}
+                  placeholder={t.codePlaceholder}
+                  style={{ width: '100%', background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.3)', borderRadius: '24px', padding: '11px 18px', color: '#f5eddc', fontSize: '13px', textAlign: 'center', outline: 'none', letterSpacing: '1px' }}
+                />
+                {codeError && <p style={{ color: '#ff8a8a', fontSize: '11.5px', margin: 0 }}>{codeError}</p>}
+                <button type="submit" className="sg-btn-primary" style={{ maxWidth: '260px' }}>{t.enterBtn}</button>
+              </form>
             </>
           )}
  
