@@ -620,6 +620,7 @@ export default function SantuarioGenoraApp() {
               <audio
                 ref={mediaRef}
                 src={selectedTrack.src}
+                loop={durationLimit === null}
                 onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
                 onLoadedMetadata={(e) => setTrackDuration(e.currentTarget.duration)}
                 onEnded={() => setIsPlaying(false)}
@@ -628,6 +629,7 @@ export default function SantuarioGenoraApp() {
               <video
                 ref={mediaRef}
                 src={selectedTrack.src}
+                loop={durationLimit === null}
                 style={{ width: '90%', maxWidth: '320px', borderRadius: '14px', marginBottom: '18px', display: isPlaying ? 'block' : 'none' }}
                 onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
                 onLoadedMetadata={(e) => setTrackDuration(e.currentTarget.duration)}
