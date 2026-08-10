@@ -10,7 +10,7 @@ const BG = '#020617';
  
 // ---- CONFIGURACIÓN: WhatsApp de contacto ----
 // ⚠️ Reemplaza por tu número real con código de país, sin +, sin espacios (ej: 573001234567)
-const WHATSAPP_NUMBER = '573000000000';
+const WHATSAPP_NUMBER = '573197618130';
 const WHATSAPP_MSG_ES = encodeURIComponent('Hola Pamela, necesito acompañamiento o un nuevo código de acceso al Santuario GENORA 🙏✨');
 const WHATSAPP_MSG_EN = encodeURIComponent('Hi Pamela, I need support or a new access code for Santuario GENORA 🙏✨');
  
@@ -46,16 +46,22 @@ const T = {
  
  
 const TRACKS = [
-  { id: 'vital-restore', type: 'audio', title: 'Vital Restore', description: 'Restauracion vital y recuperacion de energia.', description_en: 'Vital restoration and energy recovery.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/vital-restore.wav' },
-  { id: 'energy-full-reset', type: 'audio', title: 'Energy Full Reset', description: 'Limpieza de oscuridad y recalibracion de energia.', description_en: 'Clearing of darkness and energy recalibration.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/energy-full-reset.wav?v=2' },
-  { id: 'business-magnet', type: 'audio', title: 'Business Magnet', description: 'Frecuencia para atraer clientes y dinero, expansion de tu empresa.', description_en: 'Frequency to attract clients and money, business expansion.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/business-magnet.wav' },
-  { id: 'lucky-flow', type: 'audio', title: 'Lucky Flow', description: 'Frecuencia para ganar la loteria, ganar dinero y sintonizar con la buena suerte — el poder interior.', description_en: 'Frequency to win the lottery, earn money, and tune into good luck — your inner power.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/lucky-flow.wav' },
-  { id: 'lumina', type: 'audio', title: 'Lumina', description: 'Claridad mental.', description_en: 'Mental clarity.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/lumina.wav' },
-  { id: 'momentum', type: 'audio', title: 'Momentum', description: 'Frecuencia para deshacer situaciones y facilitar cambios — tambien asociada a ganar loteria.', description_en: 'Frequency to dissolve stuck situations and facilitate change — also associated with winning the lottery.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/momentum.wav' },
-  { id: 'crystal-reset', type: 'audio', title: 'Crystal Reset', description: 'Purificacion de cristales.', description_en: 'Crystal purification.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/crystal-reset.wav?v=2' },
-  { id: 'mental-flow-balance', type: 'audio', title: 'Mental Flow Balance', description: 'Equilibrio mental, desactivacion de dialogos mentales.', description_en: 'Mental balance, quieting of mental chatter.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/mental-flow-balance.wav' },
-  { id: 'safe-within', type: 'audio', title: 'Safe Within', description: 'Desactivacion de miedos y ansiedades profundas, recuperacion del equilibrio interior.', description_en: 'Release of deep fears and anxiety, restoring inner balance.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/safe-within.wav?v=2' },
+  { id: 'vital-restore', type: 'audio', title: 'Vital Restore', description: 'Restauracion vital y recuperacion de energia.', description_en: 'Vital restoration and energy recovery.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/vital-restore.wav', v: 1 },
+  { id: 'energy-full-reset', type: 'audio', title: 'Energy Full Reset', description: 'Limpieza de oscuridad y recalibracion de energia.', description_en: 'Clearing of darkness and energy recalibration.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/energy-full-reset.wav', v: 2 },
+  { id: 'business-magnet', type: 'audio', title: 'Business Magnet', description: 'Frecuencia para atraer clientes y dinero, expansion de tu empresa.', description_en: 'Frequency to attract clients and money, business expansion.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/business-magnet.wav', v: 1 },
+  { id: 'lucky-flow', type: 'audio', title: 'Lucky Flow', description: 'Frecuencia para ganar la loteria, ganar dinero y sintonizar con la buena suerte — el poder interior.', description_en: 'Frequency to win the lottery, earn money, and tune into good luck — your inner power.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/lucky-flow.wav', v: 1 },
+  { id: 'lumina', type: 'audio', title: 'Lumina', description: 'Claridad mental.', description_en: 'Mental clarity.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/lumina.wav', v: 1 },
+  { id: 'momentum', type: 'audio', title: 'Momentum', description: 'Frecuencia para deshacer situaciones y facilitar cambios — tambien asociada a ganar loteria.', description_en: 'Frequency to dissolve stuck situations and facilitate change — also associated with winning the lottery.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/momentum.wav', v: 1 },
+  { id: 'crystal-reset', type: 'audio', title: 'Crystal Reset', description: 'Purificacion de cristales.', description_en: 'Crystal purification.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/crystal-reset.wav', v: 2 },
+  { id: 'mental-flow-balance', type: 'audio', title: 'Mental Flow Balance', description: 'Equilibrio mental, desactivacion de dialogos mentales.', description_en: 'Mental balance, quieting of mental chatter.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/mental-flow-balance.wav', v: 1 },
+  { id: 'safe-within', type: 'audio', title: 'Safe Within', description: 'Desactivacion de miedos y ansiedades profundas, recuperacion del equilibrio interior.', description_en: 'Release of deep fears and anxiety, restoring inner balance.', duration: '60 min', src: 'https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/safe-within.wav', v: 2 },
 ];
+ 
+// Agrega automaticamente la version a la URL para forzar refresco de cache
+// cuando se sube un archivo nuevo con el mismo nombre.
+function versionedSrc(track) {
+  return `${track.src}?v=${track.v || 1}`;
+}
  
 const WAVE_RINGS = [
   { delay: '0s', d: 'M 186.00,100.00 C 188.29,103.74 191.51,108.12 192.13,112.13 C 192.76,116.14 191.88,120.59 189.76,124.05 C 187.65,127.52 183.00,130.33 179.45,132.91 C 175.91,135.49 171.27,137.00 168.48,139.54 C 165.69,142.07 164.01,144.59 162.73,148.14 C 161.45,151.68 161.84,156.55 160.81,160.81 C 159.78,165.08 158.96,170.45 156.57,173.72 C 154.18,177.00 150.41,179.52 146.46,180.48 C 142.52,181.43 137.24,180.14 132.91,179.45 C 128.58,178.77 124.23,176.55 120.47,176.38 C 116.70,176.20 113.73,176.79 110.32,178.40 C 106.91,180.00 103.74,183.71 100.00,186.00 C 96.26,188.29 91.88,191.51 87.87,192.13 C 83.86,192.76 79.41,191.88 75.95,189.76 C 72.48,187.65 69.67,183.00 67.09,179.45 C 64.51,175.91 63.00,171.27 60.46,168.48 C 57.93,165.69 55.41,164.01 51.86,162.73 C 48.32,161.45 43.45,161.84 39.19,160.81 C 34.92,159.78 29.55,158.96 26.28,156.57 C 23.00,154.18 20.48,150.41 19.52,146.46 C 18.57,142.52 19.86,137.24 20.55,132.91 C 21.23,128.58 23.45,124.23 23.62,120.47 C 23.80,116.70 23.21,113.73 21.60,110.32 C 20.00,106.91 16.29,103.74 14.00,100.00 C 11.71,96.26 8.49,91.88 7.87,87.87 C 7.24,83.86 8.12,79.41 10.24,75.95 C 12.35,72.48 17.00,69.67 20.55,67.09 C 24.09,64.51 28.73,63.00 31.52,60.46 C 34.31,57.93 35.99,55.41 37.27,51.86 C 38.55,48.32 38.16,43.45 39.19,39.19 C 40.22,34.92 41.04,29.55 43.43,26.28 C 45.82,23.00 49.59,20.48 53.54,19.52 C 57.48,18.57 62.76,19.86 67.09,20.55 C 71.42,21.23 75.77,23.45 79.53,23.62 C 83.30,23.80 86.27,23.21 89.68,21.60 C 93.09,20.00 96.26,16.29 100.00,14.00 C 103.74,11.71 108.12,8.49 112.13,7.87 C 116.14,7.24 120.59,8.12 124.05,10.24 C 127.52,12.35 130.33,17.00 132.91,20.55 C 135.49,24.09 137.00,28.73 139.54,31.52 C 142.07,34.31 144.59,35.99 148.14,37.27 C 151.68,38.55 156.55,38.16 160.81,39.19 C 165.08,40.22 170.45,41.04 173.72,43.43 C 177.00,45.82 179.52,49.59 180.48,53.54 C 181.43,57.48 180.14,62.76 179.45,67.09 C 178.77,71.42 176.55,75.77 176.38,79.53 C 176.20,83.30 176.79,86.27 178.40,89.68 C 180.00,93.09 183.71,96.26 186.00,100.00 Z' },
@@ -255,6 +261,22 @@ const inlineStyles = `
     animation: aura-gold-santuario 5s ease-in-out infinite;
   }
   .sg-templo-core video { width: 100%; height: 100%; object-fit: cover; }
+  @keyframes sg-sparkle-appear {
+    0%, 100% { opacity: 0; transform: scale(0); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+  .sg-templo-sparkle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 0 8px 3px rgba(230,205,150,0.9), 0 0 16px 4px rgba(230,205,150,0.4);
+  }
+  .sg-sp1 { top: 5%; left: 48%; animation: sg-sparkle-appear 2.2s infinite 0s; }
+  .sg-sp2 { top: 20%; right: 3%; animation: sg-sparkle-appear 2.2s infinite 0.4s; }
+  .sg-sp3 { bottom: 8%; right: 12%; animation: sg-sparkle-appear 2.2s infinite 0.8s; }
+  .sg-sp4 { bottom: 5%; left: 18%; animation: sg-sparkle-appear 2.2s infinite 1.2s; }
   .sg-templo-wave-svg {
     position: absolute; top: 0; left: 0;
     width: 100%; height: 100%;
@@ -605,6 +627,10 @@ export default function SantuarioGenoraApp() {
  
             <div className="sg-templo-orb-container">
               <TemploWave paused={!isPlaying} />
+              <span className="sg-templo-sparkle sg-sp1" />
+              <span className="sg-templo-sparkle sg-sp2" />
+              <span className="sg-templo-sparkle sg-sp3" />
+              <span className="sg-templo-sparkle sg-sp4" />
               <div className="sg-templo-core">
                 <video src="/imagenes/adn-animado.mp4" autoPlay loop muted playsInline className="sg-gold-filter" />
               </div>
@@ -619,7 +645,7 @@ export default function SantuarioGenoraApp() {
             {selectedTrack.type === 'audio' ? (
               <audio
                 ref={mediaRef}
-                src={selectedTrack.src}
+                src={versionedSrc(selectedTrack)}
                 loop={durationLimit === null}
                 onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
                 onLoadedMetadata={(e) => setTrackDuration(e.currentTarget.duration)}
@@ -628,7 +654,7 @@ export default function SantuarioGenoraApp() {
             ) : (
               <video
                 ref={mediaRef}
-                src={selectedTrack.src}
+                src={versionedSrc(selectedTrack)}
                 loop={durationLimit === null}
                 style={{ width: '90%', maxWidth: '320px', borderRadius: '14px', marginBottom: '18px', display: isPlaying ? 'block' : 'none' }}
                 onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
