@@ -526,7 +526,7 @@ export default function SantuarioGenoraApp() {
   const Header = () => (
     <div className="sg-header">
       <img
-        src="/imagenes/genora-logo-white.png"
+        src="https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/genora-logo-white.png"
         alt="Genora"
         className="sg-header-logo"
         onError={(e) => { e.currentTarget.style.display = 'none'; }}
@@ -543,7 +543,7 @@ export default function SantuarioGenoraApp() {
         <div className="sg-content">
           <Header />
           <div className="sg-orb-wrap">
-            <video src="/imagenes/adn-animado.mp4" autoPlay loop muted playsInline className="sg-orb-img sg-gold-filter" />
+            <video src="https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/adn-animado.mp4" autoPlay loop muted playsInline className="sg-orb-img sg-gold-filter" />
           </div>
  
           {accessState === 'no-token' && (
@@ -599,7 +599,7 @@ export default function SantuarioGenoraApp() {
         {view === 'catalog' && (
           <>
             <div className="sg-orb-wrap" style={{ width: '96px', height: '96px', marginBottom: '18px' }}>
-              <video src="/imagenes/adn-animado.mp4" autoPlay loop muted playsInline className="sg-orb-img sg-gold-filter" />
+              <video src="https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/adn-animado.mp4" autoPlay loop muted playsInline className="sg-orb-img sg-gold-filter" />
             </div>
             <div className="sg-greeting">
               <div className="sg-greeting-hi">{t.welcomeHi}</div>
@@ -632,7 +632,7 @@ export default function SantuarioGenoraApp() {
               <span className="sg-templo-sparkle sg-sp3" />
               <span className="sg-templo-sparkle sg-sp4" />
               <div className="sg-templo-core">
-                <video src="/imagenes/adn-animado.mp4" autoPlay loop muted playsInline className="sg-gold-filter" />
+                <video src="https://genora-global-frecuencias.s3.us-east-2.amazonaws.com/adn-animado.mp4" autoPlay loop muted playsInline className="sg-gold-filter" />
               </div>
             </div>
  
